@@ -1,0 +1,71 @@
+<style>
+    body {
+        font-size: 10px;
+    }
+    #selectedText {
+      width: 100%;
+      height: 200px;
+      border-style: solid;
+      border-color: black;
+      border-width: 1px;
+    }
+    #json {
+      width: 100%;
+      height: 200px;
+      border-style: solid;
+      border-color: black;
+      border-width: 1px;
+    }
+</style>
+
+<div style="border-width: 1px; border-style: solid; height: 100%; padding: 0px">
+    <div id="selectedText"></div><br>
+    <input id="reverse" type="button" value="Reverse current page" onclick="reverseCurrentPage();"></input><br><br>
+    <input id="scroll_input" type="text" value="8-205"/><input id="scroll" type="button" value="Scroll to element" onclick="scrollToElement();"></input><br><br>
+    <input id="highlight" type="button" value="Highlight using json below" onclick="highlight();"></input><br><br>
+    <textarea id="json" name="json" rows="10" cols="50"></textarea>
+</div>
+
+<script>
+    let json = {"3":{"3":{},"5":{},"7":{},"9":{},"12":{},"13":{},"14":{},"15":{}}};
+
+    document.getElementById("json").value = JSON.stringify(json, null, 3);
+
+    function message(target, name, data) {
+        let object = {
+            target: target,
+            event: name,
+            data: data
+        }
+        window.top.postMessage(object, "*");
+    }
+
+    window.onmessage = function(e) {
+        let object = e.data;
+        let event = object.event;
+        let data = object.data
+        if (event == "selectedTokens") {
+            document.getElementById("selectedText").innerHTML = data.text;
+            message("VIEWER", "highlightTokens", data.tokens);
+        } else if (event == "displayTokens") {
+            document.getElementById("selectedText").innerHTML = data.text;
+        }
+    };
+
+    function scrollToElement() {
+        let name = document.getElementById("scroll_input").value
+        if (name) {
+            message("VIEWER", "scrollToElement", name);
+        }
+    }
+
+    function reverseCurrentPage() {
+        message("VIEWER", "reverseCurrentPage", {});
+    }
+
+    function highlight() {
+        let data = document.getElementById("json").value;
+        data = JSON.parse(data)
+        message("VIEWER", "highlightTokens", data);
+    }
+</script>

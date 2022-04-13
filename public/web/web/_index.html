@@ -1,0 +1,30 @@
+<iframe id="viewer"
+    title="PDF Viever"
+    width="70%"
+    height="100%"
+    src="viewer.html"
+    align="left"
+    frameborder="0"
+    style="margin-top: 8px; margin-left: 8px">
+</iframe>
+<iframe id="action"
+    title="PDF Action"
+    width="28%"
+    height="100%"
+    src="action.html"
+    align="right"
+    frameborder="0">
+</iframe>
+
+<script>
+    let actionFrame = document.getElementById("action");
+    let viewerFrame = document.getElementById("viewer");
+    window.onmessage = function(e) {
+        let object = e.data;
+        if (object.target == "ACTION") {
+            actionFrame.contentWindow.postMessage(object);
+        } else if (object.target == "VIEWER") {
+            viewerFrame.contentWindow.postMessage(object);
+        }
+    };
+</script>
